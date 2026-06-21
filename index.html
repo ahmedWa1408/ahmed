@@ -4,14 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منظومة الحركة الميدانية - قسم التشغيل CCTV</title>
-    <!-- استدعاء ملف التصميم الخاص بك -->
-    <link rel="stylesheet" href="style.css">
-    <!-- استدعاء مكتبة الأيقونات الرسمية لتطابق الصورة الفخمة -->
+    <!-- استدعاء مكتبة الأيقونات الرسمية -->
     <link rel="stylesheet" href="https://cloudflare.com">
+    
+    <style>
+        /* -------------------------------------------------------------
+           تنسيق الاستايل والألوان المقتبسة من صورتك
+           ------------------------------------------------------------- */
+        :root {
+            --navy-blue: #0f172a;       /* الكحلي الداكن الفخم */
+            --royal-blue: #1e3c96;      /* الأزرق الملكي للهيدر والأزرار */
+            --sky-blue: #00bcd4;        /* التركواز / السماوي للإشارات */
+            --accent-green: #10b981;    /* الأخضر لإرسال التقارير */
+            --bg-light: #f1f5f9;        /* خلفية مريحة للعين */
+            --card-white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0; padding: 0; box-sizing: border-box;
+            direction: rtl; text-align: right; color: #334155;
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+        }
+
+        /* الشاشة الترحيبية الكاملة وتأثير الاختفاء */
+        .welcome-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #f1f3f8; display: flex; justify-content: center; align-items: center;
+            z-index: 999; transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+        }
+
+        .welcome-card {
+            background-color: #ffffff; padding: 40px 30px; border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); text-align: center; width: 85%; max-width: 400px;
+            animation: popupAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popupAnimation { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+        .main-title { color: #1e3c96; font-size: 2.2rem; margin: 0 0 10px 0; font-weight: bold; }
+        .sub-title { color: #00bcd4; font-size: 1.5rem; margin: 0 0 20px 0; font-weight: normal; }
+        .divider-line { width: 120px; height: 5px; background: linear-gradient(to left, #00bcd4, #1e3c96); margin: 0 auto 25px auto; border-radius: 10px; }
+        .welcome-msg { color: #4a4a4a; font-size: 1.1rem; line-height: 1.6; margin: 0; }
+
+        /* شاشة التحكم وإدخال الخطة */
+        .main-screen { width: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .manager-card {
+            background: #ffffff; width: 100%; max-width: 480px; padding: 35px 25px;
+            border-radius: 24px; box-shadow: 0 15px 35px rgba(30, 60, 150, 0.08);
+            text-align: center; border: 1px solid #e2e8f0;
+        }
+        .manager-header h2 { color: #0f172a; margin: 10px 0 5px 0; font-size: 1.6rem; }
+        .manager-header p { color: #64748b; margin: 0 0 25px 0; font-size: 0.95rem; }
+        .manager-icon { font-size: 3rem; color: #1e3c96; }
+
+        /* صندوق البحث */
+        .search-box { display: flex; gap: 10px; margin-bottom: 15px; }
+        #plan-input {
+            flex: 1; padding: 14px 20px; border: 2px solid #cbd5e1; border-radius: 14px;
+            font-size: 1.1rem; text-align: center; outline: none; transition: border-color 0.3s;
+        }
+        #plan-input:focus { border-color: #1e3c96; }
+        #search-btn {
+            background: #1e3c96; color: white; border: none; padding: 0 25px;
+            border-radius: 14px; font-size: 1.1rem; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        #search-btn:hover { background: #152a6b; }
+
+        /* منطقة ظهور المسار والأزرار */
+        .route-area { margin-top: 30px; padding-top: 25px; border-top: 2px dashed #e2e8f0; animation: fadeInSlide 0.5s ease forwards; }
+        @keyframes fadeInSlide { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        .route-display { background: #f8fafc; border-right: 5px solid #00bcd4; padding: 15px; border-radius: 8px; text-align: right; margin-bottom: 25px; }
+        .route-label { font-size: 0.85rem; color: #64748b; font-weight: bold; }
+        #dynamic-route-name { margin: 5px 0 0 0; color: #1e3c96; font-size: 1.4rem; }
+
+        /* استايل التنسيق الطولي للأزرار الثلاثة */
+        .action-buttons-group { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease;
+        }
+        .btn-start { background-color: #00bcd4; color: white; }
+        .btn-start:hover { background-color: #0097a7; transform: translateY(-2px); }
+        .btn-logs { background-color: #1e3c96; color: white; }
+        .btn-logs:hover { background-color: #152a6b; transform: translateY(-2px); }
+        .btn-back { background-color: #64748b; color: white; }
+        .btn-back:hover { background-color: #475569; transform: translateY(-2px); }
+
+        /* شاشة لوحة البيانات (الجدول الفخم) */
+        .dashboard-screen { width: 100%; max-width: 1200px; padding: 20px; text-align: center; display: none; }
+        .dashboard-header-blue {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, var(--royal-blue) 100%);
+            color: white; padding: 25px 20px; border-radius: 20px; box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+            margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .route-info-title h2 { margin: 0 0 5px 0; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .current-route-badge { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 14px; border-radius: 50px; font-size: 0.95rem; display: inline-block; font-weight: 500; }
+        .user-meta-data { display: flex; justify-content: space-between; font-size: 0.85rem; opacity: 0.9; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; }
+
+        /* الجدول الفعلي */
+        .table-container-responsive { width: 100%; background: var(--card-white); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); overflow-x: auto; border: 1px solid #e2e8f0; }
+        .field-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        .field-table th { background-color: #f8fafc; color: #475569; font-weight: bold; padding: 14px 10px; border-bottom: 2px solid #e2e8f0; text-align: center; }
+        .field-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        .field-table tbody tr:nth-child(even) { background-color: #f8fafc; }
+        .location-text-cell { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+        .location-text-cell strong { color: #1e293b; font-size: 1rem; line-height: 1.4; text-align: right; }
+
+        /* وسوم و أزرار الخرائط */
+        .type-tag { font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; }
+        .tag-flash { background-color: #e0f2fe; color: #0369a1; }
+        .tag-disk { background-color: #fef3c7; color: #b45309; }
+        .tag-turn { background-color: #f3e8ff; color: #6b21a8; }
+        .tag-general { background-color: #f1f5f9; color: #475569; }
+        .map-link-btn { background-color: var(--royal-blue); color: white; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .map-link-btn:hover { background-color: var(--navy-blue); transform: scale(1.05); }
+
+        /* عناصر فحص الموقع */
+        .table-status-controls { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .field-select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.9rem; background-color: white; outline: none; }
+        .table-notes-input { width: 90%; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.85rem; outline: none; background-color: #f8fafc; }
+        .form-actions-footer { width: 100%; margin: 25px 0; display: flex; gap: 12px; }
+        .btn-footer-save { background-color: #64748b; color: white; }
+        .btn-footer-submit { background-color: var(--accent-green); color: white; }
+        .btn-footer-save, .btn-footer-submit { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        .hidden { display: none !important; }
+        .error-text { color: #ef4444; font-weight: bold; font-size: 0.9rem; margin-top: 5px; text-align: right; }
+        .text-center { text-align: center !important; }
+        .font-bold { font-weight: bold; }
+    </style>
 </head>
 <body>
 
-    <!-- [الشاشة 1] الشاشة الترحيبية المنبثقة (تختفي تلقائياً بعد ثانيتين) -->
+    <!-- [الشاشة 1] الشاشة الترحيبية -->
     <div id="welcome-screen" class="welcome-overlay">
         <div class="welcome-card">
             <h1 class="main-title">الحركة الميدانية</h1>
@@ -21,65 +147,7 @@
         </div>
     </div>
 
-    <!-- [الشاشة 2] لوحة التحكم والتحقق من رقم الخطة والمسار المسند للموظف -->
+    <!-- [الشاشة 2] لوحة التحكم وإدخال الخطة -->
     <div id="plan-manager-screen" class="main-screen hidden">
         <div class="manager-card">
             <div class="manager-header">
-                <i class="fa-solid fa-tower-observation manager-icon"></i>
-                <h2>إدارة خطط المراقبة الميدانية</h2>
-                <p>الرجاء إدخال رقم الخطة للتحقق من المسار الفعلي</p>
-            </div>
-
-            <!-- صندوق البحث وإدخال الخطط من 1 إلى 6 -->
-            <div class="search-box">
-                <input type="number" id="plan-input" placeholder="أدخل رقم الخطة (1 - 6)..." min="1" max="6">
-                <button id="search-btn"><i class="fa-solid fa-magnifying-glass"></i> بحث</button>
-            </div>
-            
-            <!-- رسالة التنبيه في حال الخطأ في الرقم -->
-            <p id="error-msg" class="error-text hidden">❌ رقم الخطة غير مسجل بالنظام حالياً. جرب من 1 إلى 6.</p>
-
-            <!-- منطقة ظهور اسم المسار والأزرار الثلاثة المطلوبة بعد البحث الناجح -->
-            <div id="route-options-area" class="route-area hidden">
-                <div class="route-display">
-                    <span class="route-label">المسار الميداني المرتبط:</span>
-                    <h3 id="dynamic-route-name">جاري جلب المسار...</h3>
-                </div>
-
-                <!-- مجموعة الأزرار بالتنسيق الطولي المرتب -->
-                <div class="action-buttons-group">
-                    <button id="start-route-btn" class="btn btn-start">
-                        <i class="fa-solid fa-play"></i> بدء المسار الميداني
-                    </button>
-                    <button id="logs-route-btn" class="btn btn-logs">
-                        <i class="fa-solid fa-clock-rotate-left"></i> سجلات المسار السابقة
-                    </button>
-                    <button id="back-route-btn" class="btn btn-back">
-                        <i class="fa-solid fa-arrow-rotate-right"></i> رجوع للخلف
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- [الشاشة 3] حاوية لوحة البيانات الفخمة وجدول المواقع الميداني -->
-    <div id="table-dashboard-screen" class="dashboard-screen hidden">
-        <!-- يتم توليد الجدول الكامل الـ 31 والـ 34 موقعاً فيه ديناميكياً بناءً على ملف المسار المختار -->
-    </div>
-
-    <!-- -------------------------------------------------------------
-         ربط جميع ملفات الـ Javascript معاً بالترتيب الصحيح لضمان عدم التداخل
-         ------------------------------------------------------------- -->
-    <!-- الملف الأساسي للتحكم والتنقلات والبحث -->
-    <script src="script.js"></script>
-    
-    <!-- ملفات المسارات الستة الجغرافية التي قمنا ببنائها على حدة -->
-    <script src="onizah.js"></script>
-    <script src="hail.js"></script>
-    <script src="amsidrah.js"></script>
-    <script src="albadaya.js"></script>
-    <script src="quba.js"></script>
-    <script src="shery.js"></script>
-
-</body>
-</html>
