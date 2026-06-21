@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم الميدانية - CCTV</title>
+    <title>منظومة الحركة الميدانية - قسم التشغيل CCTV</title>
+    <!-- استدعاء ملف التصميم الخاص بك -->
     <link rel="stylesheet" href="style.css">
-    <!-- استدعاء خطوط FontAwesome للأيقونات لتبدو تماماً كالصورة المرفقة -->
+    <!-- استدعاء مكتبة الأيقونات الرسمية لتطابق الصورة الفخمة -->
     <link rel="stylesheet" href="https://cloudflare.com">
 </head>
 <body>
 
-    <!-- [شاشة 1] الشاشة الترحيبية الكاملة (تختفي تلقائياً بعد ثانيتين) -->
+    <!-- [الشاشة 1] الشاشة الترحيبية المنبثقة (تختفي تلقائياً بعد ثانيتين) -->
     <div id="welcome-screen" class="welcome-overlay">
         <div class="welcome-card">
             <h1 class="main-title">الحركة الميدانية</h1>
@@ -20,57 +21,65 @@
         </div>
     </div>
 
-    <!-- [شاشة 2] شاشة البحث والتحكم بالخطة (تظهر بعد الترحيب) -->
+    <!-- [الشاشة 2] لوحة التحكم والتحقق من رقم الخطة والمسار المسند للموظف -->
     <div id="plan-manager-screen" class="main-screen hidden">
         <div class="manager-card">
             <div class="manager-header">
-                <i class="fa-solid fa-route manager-icon"></i>
+                <i class="fa-solid fa-tower-observation manager-icon"></i>
                 <h2>إدارة خطط المراقبة الميدانية</h2>
-                <p>الرجاء إدخال رقم الخطة للتحقق من المسار</p>
+                <p>الرجاء إدخال رقم الخطة للتحقق من المسار الفعلي</p>
             </div>
 
-            <!-- صندوق البحث -->
+            <!-- صندوق البحث وإدخال الخطط من 1 إلى 6 -->
             <div class="search-box">
-                <input type="number" id="plan-input" placeholder="أدخل رقم الخطة هنا...">
+                <input type="number" id="plan-input" placeholder="أدخل رقم الخطة (1 - 6)..." min="1" max="6">
                 <button id="search-btn"><i class="fa-solid fa-magnifying-glass"></i> بحث</button>
             </div>
             
-            <!-- رسالة الخطأ -->
-            <p id="error-msg" class="error-text hidden">❌ رقم الخطة غير مسجل بالنظام الحين.</p>
+            <!-- رسالة التنبيه في حال الخطأ في الرقم -->
+            <p id="error-msg" class="error-text hidden">❌ رقم الخطة غير مسجل بالنظام حالياً. جرب من 1 إلى 6.</p>
 
-            <!-- منطقة ظهور تفاصيل المسار والأزرار (تكون مخفية حتى يتم البحث بنجاح) -->
+            <!-- منطقة ظهور اسم المسار والأزرار الثلاثة المطلوبة بعد البحث الناجح -->
             <div id="route-options-area" class="route-area hidden">
                 <div class="route-display">
-                    <span class="route-label">المسار الحالي:</span>
-                    <h3 id="dynamic-route-name">عنيزة والمذنب</h3>
+                    <span class="route-label">المسار الميداني المرتبط:</span>
+                    <h3 id="dynamic-route-name">جاري جلب المسار...</h3>
                 </div>
 
-                <!-- الأزرار المطلوبة مصفوفة بتنسيق طولي مريح وجذاب -->
+                <!-- مجموعة الأزرار بالتنسيق الطولي المرتب -->
                 <div class="action-buttons-group">
                     <button id="start-route-btn" class="btn btn-start">
                         <i class="fa-solid fa-play"></i> بدء المسار الميداني
                     </button>
                     <button id="logs-route-btn" class="btn btn-logs">
-                        <i class="fa-solid fa-history"></i> سجلات المسار السابقة
+                        <i class="fa-solid fa-clock-rotate-left"></i> سجلات المسار السابقة
                     </button>
                     <button id="back-route-btn" class="btn btn-back">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> رجوع للخلف
+                        <i class="fa-solid fa-arrow-rotate-right"></i> رجوع للخلف
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- [شاشة 3] شاشة جدول المواقع الميداني (تفتح عند الضغط على "بدء المسار") -->
+    <!-- [الشاشة 3] حاوية لوحة البيانات الفخمة وجدول المواقع الميداني -->
     <div id="table-dashboard-screen" class="dashboard-screen hidden">
-        <!-- هنا سنبني الجدول الاحترافي الكامل في خطوتنا القادمة -->
-        <div class="temporary-header">
-            <h2><i class="fa-solid fa-list-check"></i> جدول المواقع والمهام الفعلي</h2>
-            <p>أهلاً بك! هذا هو جدول المتابعة الذي أرسلت صورته.. جاهز للبناء فور إشارتك.</p>
-            <button id="exit-to-manager" class="btn btn-back" style="max-width: 200px; margin: 20px auto;">الرجوع للتحكم</button>
-        </div>
+        <!-- يتم توليد الجدول الكامل الـ 31 والـ 34 موقعاً فيه ديناميكياً بناءً على ملف المسار المختار -->
     </div>
 
+    <!-- -------------------------------------------------------------
+         ربط جميع ملفات الـ Javascript معاً بالترتيب الصحيح لضمان عدم التداخل
+         ------------------------------------------------------------- -->
+    <!-- الملف الأساسي للتحكم والتنقلات والبحث -->
     <script src="script.js"></script>
+    
+    <!-- ملفات المسارات الستة الجغرافية التي قمنا ببنائها على حدة -->
+    <script src="onizah.js"></script>
+    <script src="hail.js"></script>
+    <script src="amsidrah.js"></script>
+    <script src="albadaya.js"></script>
+    <script src="quba.js"></script>
+    <script src="shery.js"></script>
+
 </body>
 </html>
