@@ -1,0 +1,236 @@
+/* -------------------------------------------------------------
+   نظام التتبع الميداني المتكامل - قسم التشغيل CCTV (النسخة الإحترافية)
+   ------------------------------------------------------------- */
+:root {
+    --navy-blue: #0f172a;       /* الكحلي الداكن الفخم */
+    --royal-blue: #1e3c96;      /* الأزرق الملكي للهيدر والأزرار */
+    --sky-blue: #00bcd4;        /* التركواز / السماوي للإشارات */
+    --accent-green: #10b981;    /* الأخضر لإرسال التقارير */
+    --bg-light: #f1f5f9;        /* خلفية مريحة للعين */
+    --card-white: #ffffff;
+}
+
+/* إعدادات عامة وتصفير الهوامش */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-light);
+    margin: 0; padding: 0; box-sizing: border-box;
+    direction: rtl; text-align: right;
+    color: #334155;
+    min-height: 100vh;
+}
+
+/* الشاشة الترحيبية الكاملة وحل مشكلة عدم الاختفاء */
+.welcome-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #f1f3f8;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+/* البطاقة البيضاء المنبثقة بزوايا دائرية */
+.welcome-card {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    width: 85%;
+    max-width: 400px;
+    animation: popupAnimation 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popupAnimation {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.main-title { color: #1e3c96; font-size: 2.2rem; margin: 0 0 10px 0; font-weight: bold; }
+.sub-title { color: #00bcd4; font-size: 1.5rem; margin: 0 0 20px 0; font-weight: normal; }
+.divider-line { width: 120px; height: 5px; background: linear-gradient(to left, #00bcd4, #1e3c96); margin: 0 auto 25px auto; border-radius: 10px; }
+.welcome-msg { color: #4a4a4a; font-size: 1.1rem; line-height: 1.6; margin: 0; }
+
+/* -------------------------------------------------------------
+   شاشة التحكم وإدخال حقول البحث (تم تكبيرها لتناسب جولات الجوال الميدانية)
+   ------------------------------------------------------------- */
+.main-screen {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.manager-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    padding: 40px 25px;
+    border-radius: 24px;
+    box-shadow: 0 15px 35px rgba(30, 60, 150, 0.08);
+    text-align: center;
+    border: 1px solid #e2e8f0;
+}
+
+.manager-header h2 { color: #0f172a; margin: 15px 0 8px 0; font-size: 1.7rem; }
+.manager-header p { color: #64748b; margin: 0 0 30px 0; font-size: 1rem; }
+.manager-icon { font-size: 3.5rem; color: #1e3c96; }
+
+/* صندوق البحث المدعم بحجم مريح لليدين */
+.search-box {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+#plan-input {
+    flex: 1;
+    padding: 16px 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    text-align: center;
+    outline: none;
+    font-weight: bold;
+    transition: border-color 0.3s;
+}
+
+#plan-input:focus { border-color: #1e3c96; }
+
+#search-btn {
+    background: #1e3c96;
+    color: white;
+    border: none;
+    padding: 0 30px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+#search-btn:hover { background: #152a6b; }
+
+/* منطقة ظهور اسم المسار بعد الفحص */
+.route-area {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px dashed #e2e8f0;
+    animation: fadeInSlide 0.4s ease forwards;
+}
+
+@keyframes fadeInSlide {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.route-display {
+    background: #f8fafc;
+    border-right: 6px solid #00bcd4;
+    padding: 18px;
+    border-radius: 12px;
+    text-align: right;
+    margin-bottom: 25px;
+}
+
+.route-label { font-size: 0.9rem; color: #64748b; font-weight: bold; }
+#dynamic-route-name { margin: 8px 0 0 0; color: #1e3c96; font-size: 1.5rem; }
+
+/* الأزرار الثلاثة المطلوبة بالتنسيق الطولي */
+.action-buttons-group {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-start { background-color: #00bcd4; color: white; }
+.btn-start:hover { background-color: #0097a7; transform: translateY(-2px); }
+
+.btn-logs { background-color: #1e3c96; color: white; }
+.btn-logs:hover { background-color: #152a6b; transform: translateY(-2px); }
+
+.btn-back { background-color: #64748b; color: white; }
+.btn-back:hover { background-color: #475569; transform: translateY(-2px); }
+
+/* -------------------------------------------------------------
+   تنسيقات لوحة البيانات والجدول الفعلي المستدعى
+   ------------------------------------------------------------- */
+.dashboard-screen {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 10px 40px 10px;
+    box-sizing: border-box;
+}
+
+.dashboard-header-blue {
+    background: linear-gradient(135deg, var(--navy-blue) 0%, var(--royal-blue) 100%);
+    color: white;
+    padding: 25px 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.route-info-title h2 { margin: 0 0 5px 0; font-size: 1.5rem; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+.current-route-badge { background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3); padding: 6px 14px; border-radius: 50px; font-size: 0.95rem; display: inline-block; font-weight: 500; }
+.user-meta-data { display: flex; justify-content: space-between; font-size: 0.85rem; opacity: 0.9; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 10px; }
+
+.table-container-responsive { width: 100%; background: var(--card-white); border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); overflow-x: auto; border: 1px solid #e2e8f0; }
+.field-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; min-width: 600px; }
+.field-table th { background-color: #f8fafc; color: #475569; font-weight: bold; padding: 14px 10px; border-bottom: 2px solid #e2e8f0; text-align: center; }
+.field-table td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.field-table tbody tr:nth-child(even) { background-color: #f8fafc; }
+.field-table tbody tr:hover { background-color: #f0fdf4; }
+
+.location-text-cell { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.location-text-cell strong { color: #1e293b; font-size: 1rem; line-height: 1.4; }
+
+.type-tag { font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 6px; display: inline-block; }
+.tag-flash { background-color: #e0f2fe; color: #0369a1; }
+.tag-disk { background-color: #fef3c7; color: #b45309; }
+.tag-turn { background-color: #f3e8ff; color: #6b21a8; }
+.tag-general { background-color: #f1f5f9; color: #475569; }
+
+.map-link-btn { background-color: var(--royal-blue); color: white; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+.map-link-btn:hover { background-color: var(--navy-blue); transform: scale(1.05); }
+
+.table-status-controls { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.field-select { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.9rem; background-color: white; outline: none; cursor: pointer; }
+.table-notes-input { width: 90%; padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.85rem; outline: none; background-color: #f8fafc; }
+.table-notes-input:focus { background-color: white; border-color: var(--royal-blue); }
+
+.form-actions-footer { width: 100%; margin: 25px auto; display: flex; gap: 12px; box-sizing: border-box; }
+.btn-footer-save, .btn-footer-submit { flex: 1; padding: 15px; border: none; border-radius: 12px; font-size: 1.05rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; }
+.btn-footer-save { background-color: #64748b; color: white; }
+.btn-footer-submit { background-color: var(--accent-green); color: white; }
+
+/* أدوات التنبيه والإخفاء */
+.hidden { display: none !important; }
+.error-text { color: #ef4444; font-weight: bold; font-size: 0.9rem; margin-top: 8px; text-align: right; }
+.text-center { text-align: center !important; }
+.font-bold { font-weight: bold; }
